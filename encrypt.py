@@ -20,23 +20,31 @@ def print_help():
 
 
 def option_w(index, args, config):
-    pass
+    if len(args[index]) == 2 and index < len(args) - 1 and type(args[index + 1]) == str:
+        config.set_width(args[index + 1])
+    return True
 
 
 def option_C(index, args, config):
-    pass
+    config.set_force_complete(True)
+    return False
 
 
 def option_k(index, args, config):
-    pass
+    if len(args[index]) == 2 and index < len(args) - 1 and type(args[index + 1]) == str:
+        config.append_keyword(args[index + 1])
+    return True
 
 
 def option_R(index, args, config):
-    pass
+    config.set_rearrange(True)
+    return False
 
 
 def option_i(index, args, config):
-    pass
+    if len(args[index]) == 2 and index < len(args) - 1 and type(args[index + 1]) == int:
+        config.set_iterations(args[index + 1])
+    return True
 
 
 def option_h():
@@ -59,7 +67,7 @@ def parse_args(args):
         if arg[0] == "-":
             for option in arg[1:]:
                 if option in opcodes.keys():
-                    opcodes[option](index, args, config)
+                    value_read = opcodes[option](index, args, config)
         elif value_read:
             value_read = False
         else:
