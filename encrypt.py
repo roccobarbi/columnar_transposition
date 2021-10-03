@@ -19,11 +19,52 @@ def print_help():
     print("-h Print this message and quit.")
 
 
+def option_w(index, args, config):
+    pass
+
+
+def option_C(index, args, config):
+    pass
+
+
+def option_k(index, args, config):
+    pass
+
+
+def option_R(index, args, config):
+    pass
+
+
+def option_i(index, args, config):
+    pass
+
+
+def option_h():
+    print_help()
+    sys.exit(0)
+
+
 def parse_args(args):
     config = Config()
-    for arg in args:
-        if arg[0] == "-h":
-            print_help()
+    value_read = False
+    opcodes = {
+        "w": option_w,
+        "h": option_h,
+        "C": option_C,
+        "k": option_k,
+        "R": option_R,
+        "i": option_i
+    }
+    for index, arg in enumerate(args):
+        if arg[0] == "-":
+            for option in arg[1:]:
+                if option in opcodes.keys():
+                    opcodes[option](index, args, config)
+        elif value_read:
+            value_read = False
+        else:
+            if index == len(args) - 1:
+                config.set_infile_name(arg)
     return config
 
 

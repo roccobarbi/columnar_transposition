@@ -5,6 +5,7 @@ class Config:
         self.iterations = 1
         self.keywords = []
         self.rearrange = False
+        self.infile_name = None
 
     def set_width(self, width):
         self.width = width
@@ -20,6 +21,9 @@ class Config:
 
     def set_rearrange(self, rearrange):
         self.rearrange = rearrange
+
+    def set_infile_name(self, infile_name):
+        self.infile_name = infile_name
 
     def append_keyword(self, keyword):
         self.keywords.append(keyword)
