@@ -73,11 +73,38 @@ def parse_args(args):
         else:
             if index == len(args) - 1:
                 config.set_infile_name(arg)
+            else:
+                print("Wrong arguments!")
+                print_help()
     return config
+
+
+def read_infile(config):
+    plain_text = ""
+    with open(config.infile_name, "r") as infile:
+        plain_text += infile.readline()
+    return plain_text
+
+
+def encipher(current_text, keyword):
+    return current_text
 
 
 def main(args):
     config = parse_args(args)
+    current_text = read_infile(config)
+    for iteration in range(config.iterations):
+        keyword = ""
+        if config.keywords is not None:
+            if len(config.keywords) <= iteration + 1:
+                keyword = config.keywords[iteration - 1]
+            else:
+                keyword = config.keywords[-1]
+        else:  # Use the width as a fallback
+            keyword = str(range(config.width))
+        current_text = encipher(current_text, keyword)
+    print()
+    print(current_text)
 
 
 if __name__ == '__main__':
