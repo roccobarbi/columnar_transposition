@@ -25,7 +25,7 @@ def option_w(index, args, config):
     return True
 
 
-def option_C(index, args, config):
+def option_C(index, args, config):  # TODO: use this
     config.set_force_complete(True)
     return False
 
@@ -86,15 +86,26 @@ def read_infile(config):
     return plain_text
 
 
-def encipher(current_text, keyword):
-    return current_text
+def encipher(current_text, keyword, config):
+    columns = []
+    cypher_text = ""
+    width = len(keyword)
+    for index in range(width):
+        columns.append("")
+    for position, character in enumerate(current_text):
+        columns[position % width] += character
+    if config.rearrange:
+        pass  # TODO: rearrange the text based on the keyword
+    else:
+        for column in columns:
+            cypher_text += column
+    return cypher_text
 
 
 def main(args):
     config = parse_args(args)
     current_text = read_infile(config)
     for iteration in range(config.iterations):
-        keyword = ""
         if config.keywords is not None:
             if len(config.keywords) <= iteration + 1:
                 keyword = config.keywords[iteration - 1]
