@@ -1,3 +1,5 @@
+import random
+import string
 import sys
 
 from config import Config
@@ -47,7 +49,7 @@ def option_i(index, args, config):
     return True
 
 
-def option_h():
+def option_h(index, args, config):
     print_help()
     sys.exit(0)
 
@@ -82,24 +84,49 @@ def parse_args(args):
 def read_infile(config):
     plain_text = ""
     with open(config.infile_name, "r") as infile:
-        plain_text += infile.readline()
+        for line in infile:
+            plain_text += ''.join(line.rstrip("\n").split())
     return plain_text
 
 
 def encipher(current_text, keyword, config):
+    """
+    encipher takes the current text, the keyword and the configuration object and it returns the ciphertext
+
+    Assumptions on input: the current text and the keyword may be in any case, without whitespace
+    Preprocessing: the text and the keyword will be converted to uppercase before usage
+    Assumptions on output: the output will always be uppercase
+
+    :param current_text:
+    :param keyword:
+    :param config:
+    :return:
+    """
     columns = []
     cypher_text = ""
     width = len(keyword)
+    keyword = keyword.upper()
+    current_text = current_text.upper()
     for index in range(width):
         columns.append("")
     for position, character in enumerate(current_text):
         columns[position % width] += character
-    if config.rearrange:
-        pass  # TODO: rearrange the text based on the keyword
+    if config.rearrange:  # Inefficient at scale, but this is a first MVP
+        for current_letter in string.ascii_uppercase:
+            for index, letter in enumerate(keyword):
+                if letter == current_letter:
+                    cypher_text += columns[index]
     else:
         for column in columns:
             cypher_text += column
     return cypher_text
+
+
+def add_padding(current_text, length):
+    padding = ""
+    for missing in range(length):
+        padding += random.choice(string.ascii_letters)
+    return current_text + padding
 
 
 def main(args):
@@ -113,8 +140,9 @@ def main(args):
                 keyword = config.keywords[-1]
         else:  # Use the width as a fallback
             keyword = str(range(config.width))
-        current_text = encipher(current_text, keyword)
-    print()
+        if config.force_complete and len(current_text) % len(keyword) != 0:
+            current_text = add_padding(current_text, len(keyword) - (len(current_text) % len(keyword)))
+        current_text = encipher(current_text, keyword, config)
     print(current_text)
 
 
